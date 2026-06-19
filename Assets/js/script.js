@@ -1,5 +1,3 @@
-alert("JS LOADED");
-
 /* ==================================== */
 /* GLOBAL */
 /* ==================================== */
@@ -1005,11 +1003,7 @@ if (aboutSection) {
 const loginForm = document.getElementById("login-form");
 
 if (loginForm) {
-
     loginForm.addEventListener("submit", (e) => {
-
-        e.preventDefault();
-
         const email =
             document.getElementById("login-email");
 
@@ -1018,11 +1012,20 @@ if (loginForm) {
 
         let valid = true;
 
+        email.classList.remove(
+            "auth-error",
+            "auth-success"
+        );
+
+        password.classList.remove(
+            "auth-error",
+            "auth-success"
+        );
+
         if (!email.value.trim()) {
             email.classList.add("auth-error");
             valid = false;
         } else {
-            email.classList.remove("auth-error");
             email.classList.add("auth-success");
         }
 
@@ -1030,23 +1033,14 @@ if (loginForm) {
             password.classList.add("auth-error");
             valid = false;
         } else {
-            password.classList.remove("auth-error");
             password.classList.add("auth-success");
         }
 
-        if (valid) {
-
-            alert(
-                `Welcome back, Hero!\n\nEmail: ${email.value}`
-            );
-
-            // nanti bisa redirect:
-            // window.location.href = "dashboard.html";
-
+        // Hanya cegah submit jika tidak valid
+        if (!valid) {
+            e.preventDefault();
         }
-
     });
-
 }
 
 /* ==================================

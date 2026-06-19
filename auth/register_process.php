@@ -1,6 +1,7 @@
 <?php
 session_start();
-require '../config/database.php';
+
+require_once '../config/database.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header("Location: register.php");
@@ -13,27 +14,52 @@ $password = $_POST['password'] ?? '';
 $confirm = $_POST['confirm_password'] ?? '';
 
 if (
-    empty($username) ||
-    empty($email) ||
-    empty($password) ||
-    empty($confirm)
+    $username === '' ||
+    $email === '' ||
+    $password === '' ||
+    $confirm === ''
 ) {
-    die("Semua field wajib diisi");
+
+    $_SESSION['register_error'] = "Semua field wajib diisi.";
+
+    header("Location: register.php");
+    exit;
+}
+
+if (strlen($username) < 3) {
+
+    $_SESSION['register_error'] = "Username minimal 3 karakter.";
+
+    header("Location: register.php");
+    exit;
 }
 
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    die("Format email tidak valid");
+
+    $_SESSION['register_error'] = "Format email tidak valid.";
+
+    header("Location: register.php");
+    exit;
 }
 
 if ($password !== $confirm) {
-    die("Password tidak cocok");
+
+    $_SESSION['register_error'] = "Konfirmasi password tidak cocok.";
+
+    header("Location: register.php");
+    exit;
 }
 
 if (strlen($password) < 6) {
-    die("Password minimal 6 karakter");
+
+    $_SESSION['register_error'] = "Password minimal 6 karakter.";
+
+    header("Location: register.php");
+    exit;
 }
 
 try {
+
     $stmt = $pdo->prepare("
         SELECT id
         FROM users
@@ -43,8 +69,12 @@ try {
 
     $stmt->execute([$email]);
 
-    if ($stmt->rowCount() > 0) {
-        die("Email sudah digunakan");
+    if ($stmt->fetch()) {
+
+        $_SESSION['register_error'] = "Email sudah digunakan.";
+
+        header("Location: register.php");
+        exit;
     }
 
     $hashedPassword = password_hash(
@@ -54,8 +84,21 @@ try {
 
     $stmt = $pdo->prepare("
         INSERT INTO users
-        (username, email, password, xp, level_user)
-        VALUES (?, ?, ?, 0, 1)
+        (
+            username,
+            email,
+            password,
+            xp,
+            level_user
+        )
+        VALUES
+        (
+            ?,
+            ?,
+            ?,
+            0,
+            1
+        )
     ");
 
     $stmt->execute([
@@ -64,9 +107,21 @@ try {
         $hashedPassword
     ]);
 
+    $_SESSION['register_success'] =
+        "Registrasi berhasil. Silakan login.";
+
     header("Location: login.php");
     exit;
 
 } catch (PDOException $e) {
-    die("Gagal registrasi: " . $e->getMessage());
-}
+
+    error_log(
+        "[REGISTER ERROR] " . $e->getMessage()
+    );
+
+    $_SESSION['register_error'] =
+        "Terjadi kesalahan server. Silakan coba lagi.";
+
+    header("Location: register.php");
+    exit;
+} 

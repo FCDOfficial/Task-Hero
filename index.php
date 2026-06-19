@@ -5,27 +5,15 @@ if (isset($_SESSION['user_id'])) {
     header("Location: pages/Dashboard.php");
     exit;
 }
+
+$pageTitle = 'TaskHero | Level Up Your Learning Journey';
+
+include 'includes/header.php';
+include 'includes/navbar.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TaskHero | Level Up Your Learning Journey</title>
-
-    <link rel="stylesheet" href="Assets/css/style.css">
-
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-</head>
-<body>
-
-<?php include 'includes/header.php'; ?>
-<?php include 'includes/navbar.php'; ?>
-
 <main class="pt-20">
+
 <section class="min-h-screen flex items-center justify-center px-6 py-20">
 <div class="max-w-7xl mx-auto">
 
@@ -103,8 +91,10 @@ if (isset($_SESSION['user_id'])) {
                         Leaderboard & Tournament
                     </div>
                 </div>
+
             </div>
         </div>
+
     </div>
 
     <!-- FEATURES -->
@@ -143,12 +133,10 @@ if (isset($_SESSION['user_id'])) {
         </div>
 
     </div>
+
 </div>
 </section>
+
 </main>
 
 <?php include 'includes/footer.php'; ?>
-
-<script src="Assets/js/script.js"></script>
-</body>
-</html>
